@@ -1,6 +1,6 @@
 import pandas  as pd
 import re
-data=pd.read_csv(r"C:\Users\USER\OneDrive\桌面\(V2)104職缺.csv")
+data=pd.read_csv(r"D:\\Python Project\\Python_Selenium_Project-104_Job_Search_Website_Data\\(V2)104職缺.csv")
 data=data.drop(["Unnamed: 0"],axis=1)
 clean_data=[]
 county=[]

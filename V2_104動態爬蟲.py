@@ -6,7 +6,7 @@ from selenium.webdriver.chrome.options import Options
 import time
 import pandas as pd
 import re
-Options().chrome_executable_path=r"C:\Program Files\Google\Chrome\Application\chrome.exe"
+Options().chrome_executable_path=r"C:\\Program Files\\Google\\Chrome\Application\\chrome.exe"
 driver=webdriver.Chrome(Options())
 def connect(url2): 
      driver.get(url2)
@@ -14,7 +14,7 @@ def connect(url2):
 def search(job,page):
    data=[]
    driver.maximize_window()
-   search=driver.find_element(By.XPATH,'/html/body/div[2]/div/div[2]/div[1]/div/div/form/div/div/div[1]/div/input')
+   search=driver.find_element(By.XPATH,'/html/body/div/div/div[2]/div[1]/div/div/form/div/div/div[1]/div/input')
    search.send_keys(job)
    submit=driver.find_element(By.CLASS_NAME,"btn.btn-secondary.btn-block.btn-lg").click()
    time.sleep(1)
@@ -32,40 +32,39 @@ def search(job,page):
           driver.switch_to.window(driver.window_handles[1])
           time.sleep(1)
           try:  
-            main=driver.find_element(By.TAG_NAME,"h1")
+            main=driver.find_element(By.CLASS_NAME,"pr-6.text-break")
             salary=driver.find_element(By.CLASS_NAME,"t3.mb-0.mr-2.text-primary.font-weight-bold.align-top.d-inline-block")
-            company=driver.find_element(By.CLASS_NAME,"btn-link.t3.mr-6")
-            type_=driver.find_element(By.XPATH,'/html/body/div[2]/div/div[2]/div/div[1]/div[1]/div[2]/div[4]/div[2]/div')
-            site=driver.find_element(By.XPATH,'/html/body/div[2]/div/div[2]/div/div[1]/div[1]/div[2]/div[5]/div[2]/div/div/span')
-            date=re.search("\d{2}\/\d{2}",main.text).group()
-            info.append(main.text[:-7])
-            info.append(date)
+            company=driver.find_element(By.XPATH,'/html/body/div[1]/div/div[2]/div[1]/div[2]/div/div/div[1]/div/a[1]')
+            type_=driver.find_element(By.XPATH,'/html/body/div[1]/div/div[2]/div[2]/div/div[1]/div[1]/div[2]/div[4]/div[2]/div')
+            site=driver.find_element(By.XPATH,'/html/body/div[1]/div/div[2]/div[2]/div/div[1]/div[1]/div[2]/div[5]/div[2]/div/div/span[1]')
+            date=driver.find_element(By.XPATH,'/html/body/div[1]/div/div[2]/div[1]/div[2]/div/div/div[1]/h1/span/span')
+            info.append(main.text[:-8])
+            info.append(date.text)
             info.append(salary.text)
             info.append(company.text)
             info.append(type_.text)
             info.append(site.text)
             data.append(info)
-          except:
+          except :
             pass
+          print(info)
           driver.close()
           driver.switch_to.window(driver.window_handles[0])
           time.sleep(0.5)
      except:
          continue
-   data=pd.DataFrame(data)
-   return data
+   df = pd.DataFrame(data, columns=["職稱", "更新日期", "薪資待遇", "公司名稱", "工作性質", "公司地址"])
+   return df
 
 if __name__ == "__main__":
     job=input("請輸入欲查詢職缺:")
     page=input("請輸入欲查詢頁數(輸入整數):")
-    index=["職稱","更新日期","薪資待遇","公司名稱","工作性質","公司地址"]
     starttime=time.time()
     url2="https://www.104.com.tw/jobs/main/?v=2"
     connect(url2)
     data=search(job,page)       
     endtime=time.time()
     processtime=endtime-starttime
-    data.columns=index
     data.to_csv("(V2)104職缺.csv",encoding="utf-8-sig")    
     print("運行時間:%d分%.2f秒"%(processtime//60,processtime%60))
 
